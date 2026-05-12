@@ -8,6 +8,7 @@
 
 class UInputMappingContext;
 class UInputAction;
+class UInv_HudWidget;
 
 /**
  * 
@@ -31,9 +32,25 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Inventory")
 	TObjectPtr<UInputAction> InteractAction;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Inventory")
+	TObjectPtr<UInputAction> InventoryAction;
+
 	virtual void SetupInputComponent() override;
 
 	UFUNCTION()
 	void Interact();
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	TSubclassOf<UInv_HudWidget> HudWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<UInv_HudWidget> HudWidgetInstance;
+
+	UFUNCTION()
+	void CreateHudWidget();
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void InventoryToggle();
+
 
 };

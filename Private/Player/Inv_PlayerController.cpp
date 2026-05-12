@@ -5,11 +5,14 @@
 #include "InventorySystem.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Widgets/HUD/Inv_HudWidget.h"
+#include <InventoryManagement/Components/Inv_InventoryComponent.h>
+
 
 void AInv_PlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	CreateHudWidget();
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
 	if (IsValid(Subsystem))
 	{
@@ -34,6 +37,7 @@ void AInv_PlayerController::SetupInputComponent()
 	if (EIC)
 	{
 		EIC->BindAction(InteractAction, ETriggerEvent::Started, this, &AInv_PlayerController::Interact);
+		EIC->BindAction(InventoryAction, ETriggerEvent::Started, this, &AInv_PlayerController::InventoryToggle);
 	}
 
 }
@@ -41,5 +45,28 @@ void AInv_PlayerController::SetupInputComponent()
 void AInv_PlayerController::Interact()
 {
 	UE_LOG(LogInventory, Log, TEXT("Interact action triggered"));
+}
+
+void AInv_PlayerController::CreateHudWidget()
+{
+	if (IsLocalPlayerController() && HudWidgetClass)
+	{
+		HudWidgetInstance = CreateWidget<UInv_HudWidget>(this, HudWidgetClass);
+		if (HudWidgetInstance)
+		{
+			HudWidgetInstance->AddToViewport();
+		}
+		else
+		{
+			UE_LOG(LogInventory, Warning, TEXT("Failed to create HUD widget instance"));
+		}
+	}
+
+}
+
+void AInv_PlayerController::InventoryToggle()
+{
+	FindComponentByClass<UInv_InventoryComponent>()->ToggleInventory();
+
 }
 
