@@ -5,6 +5,7 @@
 #include "InventorySystem.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include <Kismet/GameplayStatics.h>
 #include "Widgets/HUD/Inv_HudWidget.h"
 #include <InventoryManagement/Components/Inv_InventoryComponent.h>
 
@@ -44,7 +45,24 @@ void AInv_PlayerController::SetupInputComponent()
 
 void AInv_PlayerController::Interact()
 {
-	UE_LOG(LogInventory, Log, TEXT("Interact action triggered"));
+	if (!GEngine || !GEngine->GameViewport) return;
+	FVector2D ViewportSize;
+	GEngine->GameViewport->GetViewportSize(ViewportSize);
+
+	FVector2D CrosshairPosition = ViewportSize * 0.5f;
+	FVector WorldLocation, WorldDirection;
+
+	if (!UGameplayStatics::DeprojectScreenToWorld(this, CrosshairPosition, WorldLocation, WorldDirection)) return;
+
+	FHitResult HitResult;
+
+	bool bHit = GetWorld()->SweepSingleByChannel(HitResult, WorldLocation, WorldLocation + WorldDirection * 1000.0f, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(50.0f));
+	if(!bHit) return;
+
+	AActor* HitActor = HitResult.GetActor();
+	if (!HitActor) return;
+	UE_LOG(LogInventory, Log, TEXT("Hit Actor: %s"), *HitActor->GetName());
+	HitActor->Destroy();
 }
 
 void AInv_PlayerController::CreateHudWidget()
