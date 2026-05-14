@@ -11,10 +11,18 @@
 /**
  * 
  */
+
+class UInv_GridSlot;
+class UCanvasPanel;
+class UImage;
+
 UCLASS()
 class INVENTORYSYSTEM_API UInv_InventoryGrid : public UUserWidget
 {
 	GENERATED_BODY()
+private:
+	virtual void NativeOnInitialized() override;
+
 
 public:
 	EInv_ItemCategory GetItemCategory() const { return ItemCategory; }
@@ -23,4 +31,26 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = ( allowPrivateAccess = "true" ) , Category = "Inventory")
 	EInv_ItemCategory ItemCategory;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UCanvasPanel> GridCanvas;
+
+	UPROPERTY()
+	TArray<TObjectPtr<UInv_GridSlot>> GridSlots;
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	TSubclassOf<UInv_GridSlot> GridSlotClass;
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	int32 GridColumns;
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	int32 GridRows;
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	float TileSize;
+
+	UFUNCTION()
+	void ConstructGrid();
+
 };
