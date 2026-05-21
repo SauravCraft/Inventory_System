@@ -22,7 +22,7 @@ private:
 	friend UInv_InventoryComponent;
 
 	UPROPERTY()
-	TObjectPtr<UInv_InventoryItem> EntryItem = nullptr;
+	TObjectPtr<UInv_InventoryItem> Item = nullptr;
 
 
 };
@@ -37,20 +37,21 @@ struct FInv_InventoryFastArray : public FFastArraySerializer
 	FInv_InventoryFastArray() : OwnerComponent(nullptr) {}
 	FInv_InventoryFastArray(UActorComponent* InOwnerComponent) : OwnerComponent(InOwnerComponent) {}
 
-	void PostReplicatedAdd( const TArray<int32> AddedIndex , int32 FinalSize);
-	void preReplicatedRemove(const TArray<int32> RemovedIndex , int32 FinalSize);
+	void PostReplicatedAdd( const TArrayView<int32> AddedIndex , int32 FinalSize);
+	void preReplicatedRemove(const TArrayView<int32> RemovedIndex , int32 FinalSize);
 
 
 
 
-	TArray<FInv_InventoryFastArray> GetAllEntries() const;
+	TArray<UInv_InventoryItem*> GetAllEntries() const;
 
-	UInv_InventoryItem AddItem(UInv_InventoryItem* Item);
-	UInv_InventoryItem AddItem(UInv_InventoryComponent* ItemComp);
+	UInv_InventoryItem* AddItem(UInv_InventoryItem* Item);
+	UInv_InventoryItem* AddItem(UInv_InventoryComponent* ItemComp);
 
 	void RemoveItem(UInv_InventoryItem* Item);
 
-	bool NetDeltaSerilize(FNetDeltaSerializeInfo& DeltaParams)
+
+	bool NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParams)
 	{
 		return FastArrayDeltaSerialize<FInv_InventoryEntries, FInv_InventoryFastArray>(Entries, DeltaParams, *this);
 	}
@@ -69,8 +70,5 @@ private:
 template<>
 struct TStructOpsTypeTraits<FInv_InventoryFastArray> : public TStructOpsTypeTraitsBase2<FInv_InventoryFastArray>
 {
-	enum
-	{
-		WithNetDeltaSerializer = true,
-	};
+	enum { WithNetDeltaSerializer = true };
 };
