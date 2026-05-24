@@ -5,8 +5,10 @@
 #include "InventorySystem.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Items/Components/Inv_ItemComponent.h"
 #include <Kismet/GameplayStatics.h>
 #include "Widgets/HUD/Inv_HudWidget.h"
+#include "InventoryManagement/Utilits/Inv_InventoryStatics.h"
 #include <InventoryManagement/Components/Inv_InventoryComponent.h>
 
 
@@ -63,6 +65,10 @@ void AInv_PlayerController::Interact()
 	if (!HitActor) return;
 	UE_LOG(LogInventory, Log, TEXT("Hit Actor: %s"), *HitActor->GetName());
 	HitActor->Destroy();
+
+	UInv_InventoryComponent* IC = FindComponentByClass<UInv_InventoryComponent>();
+	UInv_ItemComponent* ItemComp = HitActor->FindComponentByClass<UInv_ItemComponent>();
+	IC->TryToAddItem(ItemComp);
 }
 
 void AInv_PlayerController::CreateHudWidget()

@@ -1,5 +1,6 @@
 #include "InventoryManagement/Components/Inv_InventoryComponent.h"
 #include "Widgets/Inventory/InventoryBase/Inv_InventoryBase.h"
+#include "Items/Components/Inv_ItemComponent.h"
 
 UInv_InventoryComponent::UInv_InventoryComponent()
 {
@@ -75,6 +76,12 @@ void UInv_InventoryComponent::OpenInventory()
 	}
 
 
+}
+
+void UInv_InventoryComponent::TryToAddItem(UInv_ItemComponent* ItemComponent)
+{
+
+	OnNoRoom.Broadcast();
 }
 
 

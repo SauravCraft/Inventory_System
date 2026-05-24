@@ -17,13 +17,16 @@ class INVENTORYSYSTEM_API UInv_InfoMessage : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintImplementableEvent, Category = "Inventory")
-	void ShowInfoMessage();
+
+	virtual void NativeOnInitialized() override;
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Inventory")
-	void HideInfoMessage();
+	void MessageShow();
 
-	void SetMessageBlock(FText& Message);
+	UFUNCTION(BlueprintImplementableEvent, Category = "Inventory")
+	void MessageHide();
+
+	void SetMessageBlock(const FText& Message);
 	
 private:
 
@@ -34,6 +37,6 @@ private:
 	bool bIsMessageActive{ false };
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
-	float MessageTime{ 3.f };
+	float MessageLifeTime{ 3.f };
 
 };
