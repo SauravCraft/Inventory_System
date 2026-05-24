@@ -21,7 +21,7 @@ void UInv_InfoMessage::SetMessageBlock(const FText& Message)
 	GetWorld()->GetTimerManager().SetTimer(MessageTimer, [this]()
 		{
 			MessageHide(); 
-			bIsMessageActive = true;
+			bIsMessageActive = false;
 
 		}, MessageLifeTime, false);
 }
