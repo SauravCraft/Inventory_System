@@ -1,17 +1,27 @@
 #include "InventoryManagement/FastArray/Inv_FastArray.h"
 #include "InventoryManagement/Components/Inv_InventoryComponent.h"
+#include "InventoryManagement/Utilits/Inv_InventoryStatics.h"
 #include "Items/Inv_InventoryItem.h"
 
 
 void FInv_InventoryFastArray::PostReplicatedAdd(const TArrayView<int32> AddedIndex, int32 FinalSize)
 {
-
-
+	UInv_InventoryComponent* IC = Cast<UInv_InventoryComponent>(OwnerComponent);
+	if (!IsValid(IC)) return;
+	for (int32 Index : AddedIndex)
+	{
+		IC->OnItemAdded.Broadcast(Entries[Index].Item);
+	}
 }
 
 void FInv_InventoryFastArray::preReplicatedRemove(const TArrayView<int32> RemovedIndex, int32 FinalSize)
 {
-
+	UInv_InventoryComponent* IC = Cast<UInv_InventoryComponent>(OwnerComponent);
+	if (!IsValid(IC)) return;
+	for (int32 Index : RemovedIndex)
+	{
+		IC->OnItemRemoved.Broadcast(Entries[Index].Item);
+	}
 
 }
 
